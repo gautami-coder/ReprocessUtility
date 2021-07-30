@@ -1,6 +1,9 @@
 package com.ups.reprocess.utils;
 
+import java.util.logging.Logger;
+
 import org.json.simple.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -20,6 +23,8 @@ public class ChannelApiUtil {
 	private String X_IBM_Client_Secret;
 	@Value("${guid}")
 	private String guid;
+	public static final String reprocessLog ="reprocess";
+	Logger logger=Logger.getLogger(reprocessLog);
 	
 	public  String callChannelApi(JSONObject jsonObject, String testURL, String token) {		
 		try {
@@ -40,25 +45,25 @@ public class ChannelApiUtil {
 			
 			if (200 == response.getStatusCodeValue()) {
 				
+				logger.info("Success" + " " + jsonObject.toString() + " " 
+						+ "##statuscode##" + response.getStatusCodeValue());
+				
 				return "success";
 
 			} else {
 				
-				
-				System.out.println("Failed Processing" + testURL + " " + jsonObject.toString() + " " + token
+				logger.info("Failed Processing" + testURL + " " + jsonObject.toString() + " " + token
 						+ "##statuscode##" + response.getStatusCodeValue());
-				
+			
 				return "failed";
 
 			}
 			
 		}
 		catch(Exception ex) {
-			System.out.println("Failed Processing"+ testURL+" " +jsonObject.toString()+ " "+ token);
+			logger.info("Failed Processing"+ testURL+" " +jsonObject.toString());
 			
-				return(ex.getMessage());
+			return(ex.getMessage());
 		}
-		
-
 }
 }

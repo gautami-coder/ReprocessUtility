@@ -3,6 +3,7 @@ package com.ups.reprocess.utils;
 import java.io.File;
 import java.io.FileReader;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Logger;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -19,11 +20,7 @@ import com.ups.reprocess.vo.ProcessResponse;
 public class FileProcessor {
 	
 	@Autowired
-	ChannelApiUtil channelApiUtil;
-	/*
-	 * @Autowired ProcessResponse pr;
-	 */
-		
+	ChannelApiUtil channelApiUtil;	
 	@Value("${POSTPROCESSDIR}")
 	private   String POST_PROCESS_FOLDER_Path; 
 
@@ -31,6 +28,8 @@ public class FileProcessor {
 	private String testURL;
 	@Value("${token}")
 	private String token;
+	public static final String reprocessLog ="reprocess";
+	Logger logger=Logger.getLogger(reprocessLog);
 	
 	@Async("threadPoolTaskExecutor")
 	public CompletableFuture<ProcessResponse> fileProcess(File file) throws Exception{
@@ -42,7 +41,7 @@ public class FileProcessor {
 		if(null != testURL) {
 			JSONParser parser = new JSONParser();
 		FileReader fReader =  new FileReader(file);
-		System.out.println(file.getAbsolutePath());
+		logger.info("Filename With Absolute Path"+" "+file.getName());	
 		Object obj = parser.parse(fReader);
 		fReader.close();
 		JSONObject jsonObject = (JSONObject) obj;		
@@ -52,8 +51,8 @@ public class FileProcessor {
 	    pr.setStatus(status);
 		}
 		else {
-			System.out.println("FileNot Processed"+" "+file.getName());
 			
+			logger.info("FileNot Processed"+" "+file.getName());	
 		}
 		
 		
